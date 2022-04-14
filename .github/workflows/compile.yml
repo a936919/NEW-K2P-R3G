@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - 'build/Lede_R3G/start-up/start'
+      - 'build/Lede_K2P,Lede_R3G/start-up/start'
 
 env:
   Github: https://github.com/${{github.repository}}
