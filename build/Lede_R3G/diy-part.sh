@@ -3,28 +3,23 @@
 #
 # DIY扩展二合一了，在此处可以增加插件
 #
-
-sed -i "/uci commit fstab/a\uci commit network" $ZZZ
-sed -i "/uci commit network/i\uci set network.lan.ipaddr='192.168.4.3'" $ZZZ                       # IPv4 地址(openwrt后台地址)
-sed -i "/uci commit network/i\uci set network.lan.netmask='255.255.255.0'" $ZZZ                    # IPv4 子网掩码
-#sed -i "/uci commit network/i\uci set network.lan.gateway='192.168.2.1'" $ZZZ                      # IPv4 网关
-#sed -i "/uci commit network/i\uci set network.lan.broadcast='192.168.2.255'" $ZZZ                  # IPv4 广播
-#sed -i "/uci commit network/i\uci set network.lan.dns='192.168.2.1'" $ZZZ                          # DNS(多个DNS要用空格分开)
-#sed -i "/uci commit network/i\uci set network.lan.delegate='0'" $ZZZ                               # 去掉LAN口使用内置的 IPv6 管理
-#echo "close_dhcp" > package/base-files/files/etc/closedhcp                                         # 关闭DHCP服务
+git clone https://github.com/kenzok8/small-package package/small-package
+sed -i 's/192.168.1.1/10.10.10.1/g' package/base-files/files/bin/config_generate                    # 修改默认IP
 
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile            # 选择argon为默认主题
 
-sed -i "s/OpenWrt /${Author} Compiled in $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" $ZZZ           # 增加个性名字281677160
+#sed -i 's/PATCHVER:=5.4/PATCHVER:=4.19/g' target/linux/x86/Makefile  
+# 修改内核版本为4.19
 
-sed -i "/uci commit system/i\uci set system.@system[0].hostname='OpenWrt'" $ZZZ             # 修改主机名称为x86-64-OpenWrt
+# 修改默认主机名
+sed -i 's/OpenWrt/R3G/g' ./package/base-files/files/bin/config_generate
 
-#sed -i 's/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0/$1$PhflQnJ1$yamWfH5Mphs4hXV7UXWQ21:18725/g' $ZZZ   # 替换密码（要替换密码就不能设置密码为空）
-
-sed -i '/CYXluq4wUazHjmCDBCqXF/d' $ZZZ                                                             # 设置密码为空
-
-#sed -i 's/PATCHVER:=5.4/PATCHVER:=4.19/g' target/linux/x86/Makefile                               # 修改内核版本为4.19
-
+# 调整Dockerman到服务菜单
+sed -i 's/"admin"/"admin","services"/g' package/luci-app-dockerman/luasrc/controller/*.lua
+sed -i 's/"admin/"admin\/services/g' package/luci-app-dockerman/luasrc/model/*.lua
+sed -i 's/"admin/"admin\/services/g' package/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
+sed -i 's/"admin/"admin\/services/g' package/luci-app-dockerman/luasrc/view/dockerman/*.htm
+sed -i 's/"admin/"admin\/services/g' package/luci-app-dockerman/luasrc/view/dockerman/cbi/*.htm
 
 # 修改插件名字
 sed -i 's/"aMule设置"/"电驴下载"/g' `grep "aMule设置" -rl ./`
@@ -39,6 +34,10 @@ sed -i 's/"管理权"/"改密码"/g' `grep "管理权" -rl ./`
 sed -i 's/"带宽监控"/"监控"/g' `grep "带宽监控" -rl ./`
 sed -i 's/"Argon 主题设置"/"Argon设置"/g' `grep "Argon 主题设置" -rl ./`
 
+sed -i "2i uci set wireless.@wifi-iface[0].ssid=Xiaomi_R3G" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "3i uci set wireless.@wifi-iface[1].ssid=Xiaomi_R3G_5G" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "4i uci commit wireless" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "5i wifi\n" ./package/lean/default-settings/files/zzz-default-settings
 # 整理固件包时候,删除您不想要的固件或者文件,让它不需要上传到Actions空间
 cat >${GITHUB_WORKSPACE}/Clear <<-EOF
 rm -rf config.buildinfo
