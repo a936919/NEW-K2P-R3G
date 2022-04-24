@@ -22,6 +22,7 @@ uci set dhcp.@dnsmasq[0].filter_aaaa='1'                      # 禁止解析 IPv
 uci set system.@system[0].hostname='OpenWrt-123'              # 修改主机名称为OpenWrt-123
 #uci set ttyd.@ttyd[0].command='/bin/login -f root'           # 设置ttyd免帐号登录（去掉uci前面的#生效）
 
+
 # 如果有用IPV6的话,可以使用以下命令创建IPV6客户端(LAN口)（去掉全部代码uci前面#号生效）
 #uci set network.ipv6=interface
 #uci set network.ipv6.proto='dhcpv6'
@@ -30,7 +31,10 @@ uci set system.@system[0].hostname='OpenWrt-123'              # 修改主机名�
 #uci set network.ipv6.reqprefix='auto'
 #uci set firewall.@zone[0].network='lan ipv6'
 EOF
-
+sed -i "2i uci set wireless.@wifi-iface[0].ssid=Xiaomi_R3G" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "3i uci set wireless.@wifi-iface[1].ssid=Xiaomi_R3G_5G" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "4i uci commit wireless" ./package/lean/default-settings/files/zzz-default-settings
+sed -i "5i wifi\n" ./package/lean/default-settings/files/zzz-default-settings
 
 # 设置 argon 为编译必选主题(可自行修改您要的,主题名称必须对,源码内必须有该主题)
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
